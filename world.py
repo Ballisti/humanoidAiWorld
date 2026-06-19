@@ -65,13 +65,13 @@ def moveAgent(action):
                 agentX,agentY=x,y
     
     #move agent in the specified direction and wrap around if necessary
-    if action=="up" and (agentY-1)%len(world)!="\033[31m|\033[0m" and (agentY-1)%len(world)!="\033[31m_\033[0m":
+    if action=="up" and world[(agentY-1)%len(world)][agentX]!="|" and world[(agentY-1)%len(world)][agentX]!="_":
         agentY=(agentY-1)%len(world)
-    elif action=="down" and (agentY+1)%len(world)!="\033[31m|\033[0m" and (agentY+1)%len(world)!="\033[31m_\033[0m": 
+    elif action=="down" and world[(agentY+1)%len(world)][agentX]!="|" and world[(agentY+1)%len(world)][agentX]!="_": 
         agentY=(agentY+1)%len(world)
-    elif action=="left" and (agentX-1)%len(world[0])!="\033[31m|\033[0m" and (agentX-1)%len(world[0])!="\033[31m_\033[0m":
+    elif action=="left" and world[agentY][(agentX-1)%len(world[0])]!="|" and world[agentY][(agentX-1)%len(world[0])]!="_":
         agentX=(agentX-1)%len(world[0])
-    elif action=="right" and (agentX+1)%len(world[0])!="\033[31m|\033[0m" and (agentX+1)%len(world[0])!="\033[31m_\033[0m":
+    elif action=="right" and world[agentY][(agentX+1)%len(world[0])]!="|" and world[agentY][(agentX+1)%len(world[0])]!="_":
         agentX=(agentX+1)%len(world[0])
     
     if keyFound=="onKey" and action=="pick_up":
