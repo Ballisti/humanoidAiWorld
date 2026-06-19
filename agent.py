@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from anthropic import Anthropic
 
-print(load_dotenv("keys.env"))
+print(load_dotenv(".env"))
 client = Anthropic(
     # This is the default and can be omitted
     api_key=os.environ.get("ANTHROPIC_API_KEY"),
