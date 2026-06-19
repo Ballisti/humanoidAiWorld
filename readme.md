@@ -21,9 +21,9 @@ cd humanoidAiWorld
 pip install -r packages.txt
 ```
 
-anthropic
-numpy
-python-dotenv
+anthropic\n
+numpy\n
+python-dotenv\n
 
 ## 3) Configure environment variables
 
