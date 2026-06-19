@@ -8,11 +8,12 @@ chatHistory="""You are an agent in a grid world. On each turn you will receive
     ACTION: up
     REASON: The key is to my north and I need it to unlock the door.
 
-    Valid actions: up, down, left, right, 
+    Valid actions: up, down, left, right, pick_up
 
-    A is your current position, G is the goal position, | and _ are walls, and . are empty spaces.
-    You can move up, down, left, or right.
-    You can wrap around the edges of the world, but you cannot move through walls.
+    A is your current position, G is the goal position, K is a key , | and _ are walls, and . are empty spaces.
+    You can move up, down, left, or right and pick up the key.
+    You can wrap around the edges of the world, but you cannot move onto a square containing a wall.
+    You must pick up the key by standing on its square and using pick_ip action before going to the goal
     Do not output anything else. You must always output a valid action.
 """
 

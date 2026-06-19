@@ -1,5 +1,5 @@
 from numpy.random import choice,randint
-GoalReached=False
+keyFound="not found"
 def createWorld(width=10, height=10):
     global world
     #generates empty world
@@ -13,24 +13,28 @@ def createWorld(width=10, height=10):
                 p=[0.8,0.2]
             )
     
-    #ensures start and goal points are not same
-    xS=xG=yS=yG=0
-    while xS==xG and yS==yG:
-        xS,xG=randint(0,width),randint(0,width)
-        yS,yG=randint(0,height),randint(0,height)
+    #ensures start, goal and key points are not same
+    xS=xG=yS=yG=xK=yK=0
+    while xS==xG and yS==yG and xS==xK and yS==yK and xG==xK and yG==yK:
+        xS,xG,xK=randint(0,width),randint(0,width),randint(0,width)
+        yS,yG,yK=randint(0,height),randint(0,height),randint(0,height)
+        
     
     world[yG][xG]="G"    
     world[yS][xS]="A"
+    world[yK][xK]="K"
 
     #makes sure that the start and goal points are not surrounded by walls
-    if world[yG][(xG+1)%len(world[0])]=="|" or world[yG][(xG+1)%len(world[0])]=="_":
-        world[yG][(xG+1)%len(world[0])]="."
-    if world[yG][(xG-1)%len(world[0])]=="|" or world[yG][(xG-1)%len(world[0])]=="_":
-        world[yG][(xG-1)%len(world[0])]="."
-    if world[(yG+1)%len(world)][xG]=="|" or world[(yG+1)%len(world)][xG]=="_":
-        world[(yG+1)%len(world)][xG]="."
-    if world[(yG-1)%len(world)][xG]=="|" or world[(yG-1)%len(world)][xG]=="_":
-        world[(yG-1)%len(world)][xG]="."
+    for i in [xG,xS,xK]:
+        if world[yG][(i+1)%len(world[0])]=="|" or world[yG][(i+1)%len(world[0])]=="_":
+            world[yG][(i+1)%len(world[0])]="."
+        if world[yG][(i-1)%len(world[0])]=="|" or world[yG][(i-1)%len(world[0])]=="_":
+            world[yG][(i-1)%len(world[0])]="."
+    for i in [yG,yS,yK]:
+        if world[(i+1)%len(world)][xG]=="|" or world[(i+1)%len(world)][xG]=="_":
+            world[(i+1)%len(world)][xG]="."
+        if world[(i-1)%len(world)][xG]=="|" or world[(i-1)%len(world)][xG]=="_":
+            world[(i-1)%len(world)][xG]="."
    
 def displayWorld():
     displayText=""
@@ -44,29 +48,41 @@ def displayWorld():
                 displayText += "\033[31m" + value + "\033[0m "
             else:
                 displayText += value + " "
-        displayText += "\n"
+        displayText += "\n "
+    displayText+="key: "+keyFound+"\n"
     return displayText.strip()
 
-def moveAgent(direction):
+def moveAgent(action):
+    global keyFound
     #find current position of agent and remove it from the world
     agentX=agentY=0
     for y in range(len(world)):
         for x in range(len(world[y])):
             if world[y][x]=="A":
+                if keyFound=="onKey":
+                    world[y][x]="K"
                 world[y][x]="."
                 agentX,agentY=x,y
     
     #move agent in the specified direction and wrap around if necessary
-    if direction=="up" and (agentY-1)%len(world)!="|" and (agentY-1)%len(world)!="_":
+    if action=="up" and (agentY-1)%len(world)!="\033[31m|\033[0m" and (agentY-1)%len(world)!="\033[31m_\033[0m":
         agentY=(agentY-1)%len(world)
-    elif direction=="down" and (agentY+1)%len(world)!="|" and (agentY+1)%len(world)!="_": 
+    elif action=="down" and (agentY+1)%len(world)!="\033[31m|\033[0m" and (agentY+1)%len(world)!="\033[31m_\033[0m": 
         agentY=(agentY+1)%len(world)
-    elif direction=="left" and (agentX-1)%len(world[0])!="|" and (agentX-1)%len(world[0])!="_":
+    elif action=="left" and (agentX-1)%len(world[0])!="\033[31m|\033[0m" and (agentX-1)%len(world[0])!="\033[31m_\033[0m":
         agentX=(agentX-1)%len(world[0])
-    elif direction=="right" and (agentX+1)%len(world[0])!="|" and (agentX+1)%len(world[0])!="_":
+    elif action=="right" and (agentX+1)%len(world[0])!="\033[31m|\033[0m" and (agentX+1)%len(world[0])!="\033[31m_\033[0m":
         agentX=(agentX+1)%len(world[0])
     
-    if world[agentY][agentX]=="G":
+    if keyFound=="onKey" and action=="pick_up":
+        keyFound="found"
+        print("Agent has the key")
+    if world[agentY][agentX]=="K":
+        keyFound="onKey"
+    elif keyFound!="found":
+        keyFound="not found"
+    
+    if world[agentY][agentX]=="G" and keyFound=="found":
         print("Agent has reached the goal!")
         world[agentY][agentX]="A"
         return True
