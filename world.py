@@ -1,5 +1,16 @@
 from numpy.random import choice,randint
 keyFound="not found"
+
+red="\033[31m"
+green="\033[32m"
+blue="\033[34m"
+colClear="\033[0m"
+
+horizWall=red+"_"+colClear
+vertWall=red+"|"+colClear
+agent=blue+"A"+colClear
+goal=green+"G"+colClear
+
 def createWorld(width=10, height=10):
     global world
     #generates empty world
@@ -9,7 +20,7 @@ def createWorld(width=10, height=10):
     for y in range(height):
         for x in range(width):
             world[y][x] = choice(
-                [".",("_","|")[y!=0 and y!=height-1]],
+                [".",(horizWall,vertWall)[y!=0 and y!=height-1]],
                 p=[0.8,0.2]
             )
     
@@ -20,34 +31,27 @@ def createWorld(width=10, height=10):
         yS,yG,yK=randint(0,height),randint(0,height),randint(0,height)
         
     
-    world[yG][xG]="G"    
-    world[yS][xS]="A"
+    world[yG][xG]=goal  
+    world[yS][xS]=agent
     world[yK][xK]="K"
 
     #makes sure that the start and goal points are not surrounded by walls
     for i in [xG,xS,xK]:
-        if world[yG][(i+1)%len(world[0])]=="|" or world[yG][(i+1)%len(world[0])]=="_":
+        if world[yG][(i+1)%len(world[0])]==vertWall or world[yG][(i+1)%len(world[0])]==horizWall:
             world[yG][(i+1)%len(world[0])]="."
-        if world[yG][(i-1)%len(world[0])]=="|" or world[yG][(i-1)%len(world[0])]=="_":
+        if world[yG][(i-1)%len(world[0])]==vertWall or world[yG][(i-1)%len(world[0])]==horizWall:
             world[yG][(i-1)%len(world[0])]="."
     for i in [yG,yS,yK]:
-        if world[(i+1)%len(world)][xG]=="|" or world[(i+1)%len(world)][xG]=="_":
+        if world[(i+1)%len(world)][xG]==vertWall or world[(i+1)%len(world)][xG]==horizWall:
             world[(i+1)%len(world)][xG]="."
-        if world[(i-1)%len(world)][xG]=="|" or world[(i-1)%len(world)][xG]=="_":
+        if world[(i-1)%len(world)][xG]==vertWall or world[(i-1)%len(world)][xG]==horizWall:
             world[(i-1)%len(world)][xG]="."
    
 def displayWorld():
     displayText=""
     for row in world:
         for value in row:
-            if value=="A":
-                displayText += "\033[34mA\033[0m "
-            elif value=="G":
-                displayText += "\033[32mG\033[0m "
-            elif value=="|" or value=="_":
-                displayText += "\033[31m" + value + "\033[0m "
-            else:
-                displayText += value + " "
+            displayText += value + " "
         displayText += "\n "
     displayText+="key: "+keyFound+"\n"
     return displayText.strip()
@@ -58,7 +62,7 @@ def moveAgent(action):
     agentX=agentY=0
     for y in range(len(world)):
         for x in range(len(world[y])):
-            if world[y][x]=="A":
+            if world[y][x]==agent:
                 if keyFound=="onKey":
                     world[y][x]="K"
                 world[y][x]="."
@@ -82,17 +86,17 @@ def moveAgent(action):
     elif keyFound!="found":
         keyFound="not found"
     
-    if world[agentY][agentX]=="G" and keyFound=="found":
+    if world[agentY][agentX]==goal and keyFound=="found":
         print("Agent has reached the goal!")
-        world[agentY][agentX]="A"
+        world[agentY][agentX]=agent
         return True
-    world[agentY][agentX]="A"
+    world[agentY][agentX]=agent
     return False
 
 
 def parseResponse(response):
     if "ACTION:" in response:
         action=response.split("ACTION:")[1].split("\\")[0].strip()
-        print(f"\033[32mAgent action:\033[34m{action}\033[0m")
+        print(f"{green}Agent action:{blue}{action}\033[0m")
         return moveAgent(action)
     
