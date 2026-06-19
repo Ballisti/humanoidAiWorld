@@ -1,5 +1,5 @@
 from numpy.random import choice,randint
-
+GoalReached=False
 def createWorld(width=10, height=10):
     global world
     #generates empty world
@@ -33,17 +33,19 @@ def createWorld(width=10, height=10):
         world[(yG-1)%len(world)][xG]="."
    
 def displayWorld():
+    displayText=""
     for row in world:
         for value in row:
             if value=="A":
-                print("\033[34mA\033[0m",end=" ")
+                displayText += "\033[34mA\033[0m "
             elif value=="G":
-                print("\033[32mG\033[0m",end=" ")
+                displayText += "\033[32mG\033[0m "
             elif value=="|" or value=="_":
-                print("\033[31m" + value + "\033[0m",end=" ")
+                displayText += "\033[31m" + value + "\033[0m "
             else:
-                print(value,end=" ")
-        print()
+                displayText += value + " "
+        displayText += "\n"
+    return displayText.strip()
 
 def moveAgent(direction):
     #find current position of agent and remove it from the world
@@ -63,10 +65,19 @@ def moveAgent(direction):
         agentX=(agentX-1)%len(world[0])
     elif direction=="right" and (agentX+1)%len(world[0])!="|" and (agentX+1)%len(world[0])!="_":
         agentX=(agentX+1)%len(world[0])
-    world[agentY][agentX]="A"
+    
     if world[agentY][agentX]=="G":
         print("Agent has reached the goal!")
-    displayWorld()
+        world[agentY][agentX]="A"
+        return True
+    world[agentY][agentX]="A"
+    return False
 
 
+def parseResponse(response):
+    if "ACTION:" in response:
+        print("found action in string")
+        action=response.split("ACTION:")[1].split("\\")[0].strip()
+        print(f"Agent action:{action}")
+        return moveAgent(action)
     
