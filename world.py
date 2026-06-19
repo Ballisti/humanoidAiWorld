@@ -76,8 +76,7 @@ def moveAgent(direction):
 
 def parseResponse(response):
     if "ACTION:" in response:
-        print("found action in string")
         action=response.split("ACTION:")[1].split("\\")[0].strip()
-        print(f"Agent action:{action}")
+        print(f"\033[32mAgent action:\033[34m{action}\033[0m")
         return moveAgent(action)
     

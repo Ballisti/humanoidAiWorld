@@ -2,12 +2,7 @@ import os
 from dotenv import load_dotenv
 from anthropic import Anthropic
 
-print(load_dotenv(".env"))
-client = Anthropic(
-    # This is the default and can be omitted
-    api_key=os.environ.get("ANTHROPIC_API_KEY"),
-)
-systemPrompt="""You are an agent in a grid world. On each turn you will receive 
+chatHistory="""You are an agent in a grid world. On each turn you will receive 
     an observation and must output exactly ONE action in this format:
 
     ACTION: up
@@ -20,16 +15,26 @@ systemPrompt="""You are an agent in a grid world. On each turn you will receive
     You can wrap around the edges of the world, but you cannot move through walls.
     Do not output anything else. You must always output a valid action.
 """
+
+load_dotenv(".env")
+client = Anthropic(
+    # This is the default and can be omitted
+    api_key=os.environ.get("ANTHROPIC_API_KEY"),
+)
+
 def sendWorldState(world_state=""):
+    global chatHistory
+    chatHistory+="\n"+world_state
     message = client.messages.create(
         max_tokens=1024,
         messages=[
             {
                 "role": "user",
-                "content": systemPrompt + "\n" + world_state,
+                "content": chatHistory,
             }
         ],
         model="claude-sonnet-4-6",
     )
+    chatHistory+=str(message.content)
     print(message.content)
     return str(message.content)
