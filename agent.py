@@ -14,7 +14,7 @@ chatHistory="""You are an agent in a grid world. On each turn you will receive
     You can move up, down, left, or right and pick up the key.
     You can wrap around the edges of the world
     you cannot move onto a square containing a wall "|" or "_" from any direction.
-    You must pick up the key by standing on its square and using pick_ip action before going to the goal
+    You must pick up the key by standing on its square and using pick_up action before going to the goal
     Do not output anything else. You must always output a valid action.
 """
 
